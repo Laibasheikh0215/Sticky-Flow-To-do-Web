@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sticky Flow - To-Do App</title>
+  <link rel="icon" type="image/png" href="Assets/Favicon.png" />
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+  <style>
+    body {
+      background: #dce3d7;
+    }
+
+    .avatar-circle {
+      width: 40px;
+      height: 40px;
+      background: #FF7F7F;
+      color: white;
+      font-weight: bold;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+    }
+
+    .app-container {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 1200px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar {
+      border-right: 1px solid #eee;
+      min-height: 80vh;
+    }
+
+    .quote-box {
+      background: #f1f3f6;
+      border-left: 4px solid #FF7F7F;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #555;
+      padding: 10px;
+      margin-bottom: 15px;
+    }
+
+    .sticky-note {
+      border-radius: 10px;
+      padding: 20px;
+      min-height: 180px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Colors */
+    .mango {
+      background: #FFB36B;
+    }
+
+    .lemon {
+      background: #FFF685;
+    }
+
+    .peach-pop {
+      background: #FFCCB3;
+    }
+
+    .levender-mist {
+      background: #E6D7FF;
+    }
+
+    .add-card {
+      background: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+      color: #777;
+      cursor: pointer;
+      border-radius: 10px;
+      min-height: 180px;
+    }
+
+    .note-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 5px;
+    }
+
+    .icon-btn {
+      border: none;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 5px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 17px;
+    }
+
+    .icon-btn:hover {
+      background: #fff;
+      transform: scale(1.15);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+    <div class="row g-0">
+
+      <!-- Sidebar -->
+      <div class="col-3 sidebar p-3">
+
+        <!-- Avatar + Name -->
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div class="avatar-circle">LA</div>
+          <h5 class="mb-0">Laiba Arif Sheikh</h5>
+        </div>
+
+        <!-- Motivational Quote -->
+        <div class="quote-box">
+          <p id="quoteText" class="mb-0 fst-italic">"Stay positive, work hard, make it happen."</p>
+        </div>
+
+        <!-- Search -->
+        <input class="form-control mb-3" id="searchInput" placeholder="Search Notes..." />
+
+        <!-- Tasks -->
+        <h6 class="text-muted">TASKS</h6>
+        <ul class="list-group mb-4">
+          <li class="list-group-item">Upcoming <span class="badge bg-secondary float-end" id="upcomingCount">0</span></li>
+          <li class="list-group-item">Today <span class="badge bg-secondary float-end" id="todayCount">0</span></li>
+          <li class="list-group-item">Calendar</li>
+          <li class="list-group-item active" style="background-color: #FF7F7F; border: 1px solid #FF7F7F;">Sticky Wall</li>
+        </ul>
+
+        <!-- Lists -->
+        <h6 class="text-muted">LISTS</h6>
+        <div id="lists"></div>
+        <button class="btn btn-outline-secondary btn-sm mt-2" id="addListBtn">+ Add New List</button>
+
+      </div>
+
+      <!-- Main Sticky Wall -->
+      <div class="col-9 p-4">
+        <img src="Assets/Logo.png" alt="App Logo" style="height:50px;" class="mb-3" />
+        <div class="row" id="stickyContainer"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Add/Edit Note Modal -->
+  <div class="modal fade" id="noteModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Add Sticky Note</h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="text" class="form-control mb-2" id="noteTitle" placeholder="Title" />
+          <textarea class="form-control mb-2" id="noteContent" rows="4" placeholder="Content"></textarea>
+
+          <select class="form-select" id="noteColor">
+            <option value="mango">Mango</option>
+            <option value="lemon">Blue</option>
+            <option value="peach-pop">Peach Pop</option>
+            <option value="levender-mist">Levender Mist</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-primary" id="saveNoteBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const stickyContainer = document.getElementById('stickyContainer');
+    const noteModal = new bootstrap.Modal(document.getElementById('noteModal'));
+    const quoteText = document.getElementById('quoteText');
+
+    let notes = [];
+    let editIndex = -1;
+
+    // Motivational Quotes
+    const quotes = [
+      "Stay positive, work hard, make it happen.",
+      "Believe in yourself and all that you are.",
+      "Success is the sum of small efforts repeated daily.",
+      "Dream big, work hard, stay focused."
+    ];
+    function updateQuote() {
+      quoteText.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+    }
+    setInterval(updateQuote, 3000);
+
+    // Render Notes
+    const renderNotes = () => {
+      stickyContainer.innerHTML = notes.map((n, i) => `
+      <div class='col-md-4 mb-3'>
+        <div class='sticky-note ${n.color}'>
+          <div class="note-actions">
+            <button class="icon-btn" onclick="editNote(${i})"><i class="bi bi-pencil-square"></i></button>
+            <button class="icon-btn" onclick="deleteNote(${i})"><i class="bi bi-trash"></i></button>
+          </div>
+          <h5>${n.title}</h5>
+          <p>${n.content}</p>
+        </div>
+      </div>
+      `).join("") + `
+      <div class='col-md-4 mb-3'>
+        <div class='add-card' id='addCard'>+</div>
+      </div>
+      `;
+
+      document.getElementById('addCard').addEventListener('click', () => {
+        editIndex = -1;
+        document.querySelector('.modal-title').innerText = "Add Sticky Note";
+        document.getElementById('noteTitle').value = "";
+        document.getElementById('noteContent').value = "";
+        document.getElementById('noteColor').value = "mango";
+        noteModal.show();
+      });
+    };
+
+    // Save Note (Add + Edit)
+    document.getElementById('saveNoteBtn').addEventListener('click', () => {
+      const title = document.getElementById('noteTitle').value;
+      const content = document.getElementById('noteContent').value;
+      const color = document.getElementById('noteColor').value;
+
+      if (editIndex === -1) {
+        notes.push({ title, content, color });
+      } else {
+        notes[editIndex] = { title, content, color };
+      }
+
+      noteModal.hide();
+      renderNotes();
+    });
+
+    // Delete Note
+    function deleteNote(i) {
+      notes.splice(i, 1);
+      renderNotes();
+    }
+
+    // Edit Note
+    function editNote(i) {
+      editIndex = i;
+      const n = notes[i];
+      document.querySelector('.modal-title').innerText = "Edit Sticky Note";
+      document.getElementById('noteTitle').value = n.title;
+      document.getElementById('noteContent').value = n.content;
+      document.getElementById('noteColor').value = n.color;
+      noteModal.show();
+    }
+
+    renderNotes();
+  </script>
+
+</body>
+
+</html>
